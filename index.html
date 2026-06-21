@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="DiverseVAR: Balancing Diversity and Quality of Next-Scale Visual Autoregressive Models">
+    <title>DiverseVAR: Balancing Diversity and Quality of Next-Scale Visual Autoregressive Models</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+</head>
+
+<body>
+    <header class="hero">
+        <div class="container hero-inner">
+            <h2>DiverseVAR: Balancing Diversity and Quality of Next-Scale Visual Autoregressive Models</h1>
+            <h3>ECCV 2026</h2>
+            <div class="authors">
+                <p>
+                    <a href="https://uygnim99.github.io/" target="_blank">Mingue Park</a>*,
+                    Prin Phunyaphibarn*,
+                    <a href="https://phillipinseoul.github.io/" target="_blank">Phillip Y. Lee</a>,
+                    <a href="https://mhsung.github.io/" target="_blank">Minhyuk Sung</a>
+                </p>
+                <p class="affiliation">KAIST</p>
+            </div>
+            <div class="links">
+                <a href="https://arxiv.org/abs/2511.21415" class="btn" target="_blank">
+                    <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                    Paper
+                </a>
+                <a class="btn muted" aria-disabled="true">
+                    <span class="icon"><i class="fab fa-github"></i></span>
+                    Code Coming Soon
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="tldr">
+            <div class="container">
+                <h2>TL;DR</h2>
+                <p class="lead">
+                    <strong>DiverseVAR</strong> is a training-free test-time framework that increases per-prompt
+                    diversity in text-conditioned visual autoregressive models while preserving image and video quality.
+                    It combines text-embedding noise injection with <strong>scale-travel</strong>, a multi-scale latent
+                    refinement step that recovers visual fidelity from diverse but degraded samples.
+                </p>
+                <figure class="wide-figure">
+                    <img src="assets/images/diversevar_teaser.png" alt="DiverseVAR teaser comparison">
+                    <figcaption>
+                        VAR image and video models often produce near-identical outputs for the same prompt. DiverseVAR
+                        introduces diverse samples, then refines artifacts while keeping semantic variation.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section id="abstract">
+            <div class="container">
+                <h2>Abstract</h2>
+                <p>
+                    We introduce <strong>DiverseVAR</strong>, a test-time framework that enhances the output diversity
+                    of text-conditioned visual autoregressive models (VAR) without additional training or substantial
+                    computational overhead. While VAR models have recently emerged as strong competitors of diffusion
+                    and flow models for image and video generation, they suffer from a critical diversity limitation:
+                    even simple prompts often produce nearly identical outputs.
+                </p>
+                <p>
+                    We address this limitation in two stages. First, we systematically explore diversity enhancement
+                    techniques by injecting noise into different components of VAR at test time, finding that noise
+                    injection into the text embedding yields the best diversity gains. However, this comes at the cost
+                    of sharp degradation in image quality. To recover quality, we propose <strong>scale-travel</strong>:
+                    a latent refinement technique that leverages a multi-scale autoencoder to extract coarse-scale tokens
+                    and resume generation from intermediate stages.
+                </p>
+                <p>
+                    Extensive experiments demonstrate that combining text-embedding noise injection with scale-travel
+                    refinement substantially improves diversity while minimizing quality degradation, advancing the
+                    diversity-quality Pareto front.
+                </p>
+            </div>
+        </section>
+
+        <section id="method">
+            <div class="container">
+                <h2>Method</h2>
+                <p class="section-intro">
+                    DiverseVAR follows a diversify-then-refine pipeline. It first weakens the dominant text condition
+                    during early VAR generation to unlock multiple modes, then uses the multi-scale structure of VAR to
+                    rebuild clean samples from coarse tokens.
+                </p>
+
+                <figure class="wide-figure">
+                    <img src="assets/images/diversity_enhancement.png"
+                        alt="Diversity enhancement strategies for visual autoregressive models">
+                    <figcaption>
+                        We compare CFG scheduling and condition annealing for diversity enhancement. Text-embedding
+                        noise injection gives the strongest diversity gains among the tested strategies.
+                    </figcaption>
+                </figure>
+
+                <div class="method-grid">
+                    <article>
+                        <h3>1. Inject Diversity</h3>
+                        <p>
+                            VAR generation is strongly governed by the text condition, which can collapse different
+                            random seeds into highly similar outputs. DiverseVAR perturbs the text embedding during
+                            early scales, encouraging the model to explore different plausible visual modes for the same
+                            prompt.
+                        </p>
+                    </article>
+                    <article>
+                        <h3>2. Refine by Scale-Travel</h3>
+                        <p>
+                            After condition annealing generates a diverse sample, scale-travel maps it back into the
+                            multi-scale latent representation. DiverseVAR keeps the coarse tokens that capture global
+                            semantics, returns to an intermediate scale, and regenerates later scales to repair local
+                            artifacts without collapsing the new variation.
+                        </p>
+                    </article>
+                </div>
+
+                <figure class="wide-figure">
+                    <img src="assets/images/stage2_pipeline.png" alt="Stage-2 scale-travel refinement pipeline">
+                    <figcaption>
+                        Stage 2 of DiverseVAR refines diverse but degraded outputs by multi-scale encoding, selecting
+                        intermediate coarse tokens, and resuming VAR generation from that scale to reconstruct clean
+                        high-resolution details.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <section id="results">
+            <div class="container">
+                <h2>Results</h2>
+                <p class="section-intro">
+                    DiverseVAR improves the diversity-quality trade-off across text-to-image VAR models such as Infinity
+                    and Switti, and extends to text-to-video generation with InfinityStar.
+                </p>
+
+                <figure class="wide-figure">
+                    <img src="assets/images/qualitative_comparison.png"
+                        alt="Qualitative comparison of Infinity, condition annealing, and DiverseVAR">
+                    <figcaption>
+                        Infinity produces low-variation samples. Condition annealing increases diversity but introduces
+                        visible artifacts. DiverseVAR preserves the new variations while repairing visual quality.
+                    </figcaption>
+                </figure>
+
+                <figure class="wide-figure">
+                    <img src="assets/images/pareto_final.png" alt="Pareto fronts for diversity-quality trade-off">
+                    <figcaption>
+                        Across MJHQ-30K and MS-COCO, DiverseVAR consistently moves the Pareto frontier by balancing
+                        diversity metrics with quality and alignment metrics.
+                    </figcaption>
+                </figure>
+
+                <h3>Quantitative Comparisons</h3>
+                <div class="table-wrap" role="region" aria-label="Quantitative results table" tabindex="0">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Method</th>
+                                <th colspan="4">MJHQ-30K</th>
+                                <th colspan="4">MS-COCO</th>
+                            </tr>
+                            <tr>
+                                <th>FID ↓</th>
+                                <th>IR ↑</th>
+                                <th>MPD<sub>L</sub> ↑</th>
+                                <th>Vendi ↑</th>
+                                <th>FID ↓</th>
+                                <th>IR ↑</th>
+                                <th>MPD<sub>L</sub> ↑</th>
+                                <th>Vendi ↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Infinity</td>
+                                <td>19.16</td>
+                                <td>1.22</td>
+                                <td>0.33</td>
+                                <td>4.10</td>
+                                <td>37.37</td>
+                                <td>1.16</td>
+                                <td>0.37</td>
+                                <td>4.41</td>
+                            </tr>
+                            <tr>
+                                <td>+ Cond. Anneal.</td>
+                                <td>15.53</td>
+                                <td>0.49</td>
+                                <td>0.56</td>
+                                <td>7.68</td>
+                                <td>22.51</td>
+                                <td>0.39</td>
+                                <td>0.58</td>
+                                <td>8.13</td>
+                            </tr>
+                            <tr class="ours">
+                                <td>+ Scale-Travel</td>
+                                <td>15.28</td>
+                                <td>1.08</td>
+                                <td>0.48</td>
+                                <td>6.07</td>
+                                <td>28.97</td>
+                                <td>1.04</td>
+                                <td>0.52</td>
+                                <td>6.68</td>
+                            </tr>
+                            <tr>
+                                <td>Switti</td>
+                                <td>16.18</td>
+                                <td>1.11</td>
+                                <td>0.44</td>
+                                <td>4.79</td>
+                                <td>25.92</td>
+                                <td>1.18</td>
+                                <td>0.46</td>
+                                <td>5.32</td>
+                            </tr>
+                            <tr>
+                                <td>+ Cond. Anneal.</td>
+                                <td>21.34</td>
+                                <td>0.63</td>
+                                <td>0.58</td>
+                                <td>7.34</td>
+                                <td>25.26</td>
+                                <td>0.78</td>
+                                <td>0.59</td>
+                                <td>7.74</td>
+                            </tr>
+                            <tr class="ours">
+                                <td>+ Scale-Travel</td>
+                                <td>17.30</td>
+                                <td>0.93</td>
+                                <td>0.56</td>
+                                <td>6.68</td>
+                                <td>23.47</td>
+                                <td>1.05</td>
+                                <td>0.57</td>
+                                <td>7.22</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="citation">
+            <div class="container">
+                <h2>Citation</h2>
+                <pre><code>@inproceedings{park2026diversevar,
+  title     = {DiverseVAR: Balancing Diversity and Quality of Next-Scale Visual Autoregressive Models},
+  author    = {Park, Mingue and Phunyaphibarn, Prin and Lee, Phillip Y. and Sung, Minhyuk},
+  booktitle = {European Conference on Computer Vision},
+  year      = {2026}
+}</code></pre>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
