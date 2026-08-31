@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DiverseVAR qualitative image and video comparisons">
+    <title>Qualitatives | DiverseVAR</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body class="qualitatives-page">
+    <header class="hero qualitative-hero">
+        <div class="container hero-inner">
+            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to DiverseVAR</a>
+            <span class="venue">Qualitative Results</span>
+            <h1>One prompt. Many plausible worlds.</h1>
+            <p class="qualitative-hero-intro">
+                A closer look at how DiverseVAR expands the modes of text-conditioned image and video generation
+                while preserving visual fidelity.
+            </p>
+            <div class="links">
+                <a href="index.html#results" class="btn">
+                    <span class="icon"><i class="fas fa-chart-line"></i></span>
+                    Results
+                </a>
+                <a href="https://arxiv.org/abs/2511.21415" class="btn" target="_blank">
+                    <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                    Paper
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="qualitatives" class="showcase-section">
+            <div class="container">
+                <div class="showcase-header">
+                    <span class="showcase-kicker">Qualitative Gallery</span>
+                    <h2>From one condition to a richer sample space.</h2>
+                    <p class="showcase-intro">
+                        The panels below keep every comparison aligned: one prompt at a time, with Base Model,
+                        Condition Annealing, and Scale-Travel shown side by side.
+                    </p>
+                    <nav class="showcase-nav" aria-label="Qualitative gallery navigation">
+                        <a href="#image-gallery"><span>01</span> Images</a>
+                        <a href="#video-gallery"><span>02</span> Videos</a>
+                    </nav>
+                </div>
+
+                <figure class="pipeline-figure">
+                    <div class="pipeline-figure-image">
+                        <img src="assets/images/main-pipeline-quali.png"
+                            alt="DiverseVAR pipeline from base samples through condition annealing to scale-travel">
+                    </div>
+                    <figcaption>
+                        Condition annealing unlocks new modes; scale-travel then restores clean details without
+                        collapsing the variation.
+                    </figcaption>
+                </figure>
+
+                <div id="image-gallery" class="showcase-group">
+                    <div class="group-heading">
+                        <div>
+                            <span class="group-kicker">01 / Text-to-image</span>
+                            <h3>Three stages, one prompt at a time</h3>
+                        </div>
+                        <p>Select a base model, then inspect each 2 × 3 result panel.</p>
+                    </div>
+
+                    <div class="model-switcher">
+                        <input type="radio" name="image-model" id="image-model-infinity" checked>
+                        <input type="radio" name="image-model" id="image-model-switti">
+                        <div class="model-switcher-tabs" role="tablist" aria-label="Image base model">
+                            <label for="image-model-infinity" role="tab">Infinity</label>
+                            <label for="image-model-switti" role="tab">Switti</label>
+                        </div>
+                        <div id="image-model-panels" class="model-panels"></div>
+                    </div>
+                </div>
+
+                <div class="showcase-group video-showcase">
+                    <div class="group-heading">
+                        <div>
+                            <span class="group-kicker">02 / Text-to-video</span>
+                            <h3>Motion that stays diverse</h3>
+                        </div>
+                        <p>Each example is one 3 × 3 comparison matrix: three methods by three samples.</p>
+                    </div>
+                    <div id="video-gallery" class="video-grid" aria-live="polite"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const imageModels = [
+            {
+                id: "infinity",
+                name: "Infinity",
+                datasets: [
+                    {
+                        name: "MJHQ-30K",
+                        path: "mjhq",
+                        prompts: [
+                            "a hamster dressed in CIA outfit",
+                            "tiger cub playing with soccer ball",
+                            "dinosaurs with sunglasses partying, 80s style",
+                            "vintage-inspired 1970s Disney-style animals",
+                            "a Velociraptor in Yellowstone National Park"
+                        ]
+                    },
+                    {
+                        name: "MS-COCO",
+                        path: "mscoco",
+                        prompts: [
+                            "a man with a skateboard near graffiti",
+                            "people walking around a lush green field",
+                            "a man standing next to a train",
+                            "a man and woman cutting a cake together",
+                            "a cat resting in the shade of luggage"
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "switti",
+                name: "Switti",
+                datasets: [
+                    {
+                        name: "MJHQ-30K",
+                        path: "mjhq_switti",
+                        prompts: [
+                            "a hamster dressed in CIA outfit",
+                            "tiger cub playing with soccer ball",
+                            "dinosaurs with sunglasses partying, 80s style",
+                            "vintage-inspired 1970s Disney-style animals",
+                            "a Velociraptor in Yellowstone National Park"
+                        ]
+                    },
+                    {
+                        name: "MS-COCO",
+                        path: "mscoco_switti",
+                        prompts: [
+                            "a man with a skateboard near graffiti",
+                            "people walking around a lush green field",
+                            "a man standing next to a train",
+                            "a man and woman cutting a cake together",
+                            "a cat resting in the shade of luggage"
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        const imageStages = [
+            { id: "base", label: "Base Model" },
+            { id: "condition", label: "Condition Annealing" },
+            { id: "scale", label: "Scale-Travel" }
+        ];
+        const imageModelPanels = document.getElementById("image-model-panels");
+
+        imageModels.forEach(model => {
+            const panel = document.createElement("div");
+            panel.className = `model-panel model-panel--${model.id}`;
+            panel.setAttribute("role", "tabpanel");
+            panel.setAttribute("aria-label", `${model.name} qualitative results`);
+
+            model.datasets.forEach(dataset => {
+                const datasetCard = document.createElement("article");
+                datasetCard.className = "dataset-card-wide";
+                datasetCard.innerHTML = `
+                    <header class="dataset-card-header">
+                        <div>
+                            <span class="dataset-eyebrow">${dataset.name}</span>
+                            <h4>${model.name}</h4>
+                        </div>
+                        <span class="dataset-tag">5 prompts · 3 stages</span>
+                    </header>
+                    <div class="sample-stack-large"></div>
+                `;
+                const sampleStack = datasetCard.querySelector(".sample-stack-large");
+
+                dataset.prompts.forEach((prompt, promptIndex) => {
+                    const sample = document.createElement("article");
+                    sample.className = "sample-case-large";
+                    const promptHeader = document.createElement("p");
+                    promptHeader.className = "sample-prompt";
+                    promptHeader.innerHTML = `<span>${String(promptIndex + 1).padStart(2, "0")}</span>`;
+                    promptHeader.append(document.createTextNode(prompt));
+                    sample.appendChild(promptHeader);
+
+                    const resultGrid = document.createElement("div");
+                    resultGrid.className = "result-grid";
+                    imageStages.forEach(stage => {
+                        const result = document.createElement("figure");
+                        result.className = `result-panel result-panel--${stage.id}`;
+                        result.innerHTML = `<figcaption>${stage.label}</figcaption><div class="result-crop result-crop--${stage.id}"></div>`;
+                        const crop = result.querySelector(".result-crop");
+                        const image = document.createElement("img");
+                        image.src = `assets/qualitatives/image/${dataset.path}/${promptIndex}.jpg`;
+                        image.alt = `${model.name} ${stage.label} samples for ${prompt}`;
+                        image.loading = "lazy";
+                        image.decoding = "async";
+                        crop.appendChild(image);
+                        resultGrid.appendChild(result);
+                    });
+                    sample.appendChild(resultGrid);
+                    sampleStack.appendChild(sample);
+                });
+                panel.appendChild(datasetCard);
+            });
+            imageModelPanels.appendChild(panel);
+        });
+
+        const videoCases = [
+            {
+                id: "00_teaser",
+                prompt: "A flower changes from purple to orange.",
+                files: {
+                    base: ["A flower changes from purple to orange.-0.mp4", "A flower changes from purple to orange.-1.mp4", "A flower changes from purple to orange.-2.mp4"],
+                    cads: ["A flower changes from purple to orange.-0.mp4", "A flower changes from purple to orange.-1.mp4", "A flower changes from purple to orange.-2.mp4"],
+                    ours: ["A flower changes from purple to orange.-0.mp4", "A flower changes from purple to orange.-1.mp4", "A flower changes from purple to orange.-2.mp4"]
+                }
+            },
+            {
+                id: "01_fox",
+                prompt: "A white fox stands on a mossy rock in a moonlit snowy forest.",
+                files: {
+                    base: ["00001_20.mp4", "00001_12.mp4", "00001_10.mp4"],
+                    cads: ["00000_20.mp4", "00000_12.mp4", "00000_10.mp4"],
+                    ours: ["00001_20.mp4", "00001_12.mp4", "00001_10.mp4"]
+                }
+            },
+            {
+                id: "02_moon",
+                prompt: "A nighttime scene transitions from a warm golden moon to a cool silvery moon.",
+                files: {
+                    base: ["The moon changes from yellow to silver.-0.mp4", "The moon changes from yellow to silver.-1.mp4", "The moon changes from yellow to silver.-2.mp4"],
+                    cads: ["The moon changes from yellow to silver.-0.mp4", "The moon changes from yellow to silver.-1.mp4", "The moon changes from yellow to silver.-2.mp4"],
+                    ours: ["The moon changes from yellow to silver.-0.mp4", "The moon changes from yellow to silver.-1.mp4", "The moon changes from yellow to silver.-2.mp4"]
+                }
+            },
+            {
+                id: "03_beach",
+                prompt: "Pixel art beach at sunset. A striped beach ball rolls along the shore.",
+                files: {
+                    base: ["00000_80.mp4", "00000_42.mp4", "00000_27.mp4"],
+                    cads: ["00000_80.mp4", "00000_42.mp4", "00000_27.mp4"],
+                    ours: ["00004_80.mp4", "00004_42.mp4", "00004_27.mp4"]
+                }
+            },
+            {
+                id: "04_oasis",
+                prompt: "Desert oasis at sunset. A camel walks to the pond as the camera slowly dollies in.",
+                files: {
+                    base: ["00000_84.mp4", "00000_28.mp4", "00000_16.mp4"],
+                    cads: ["00000_84.mp4", "00000_28.mp4", "00000_16.mp4"],
+                    ours: ["00000_84.mp4", "00000_28.mp4", "00000_16.mp4"]
+                }
+            },
+            {
+                id: "05_cow",
+                prompt: "Red barn at sunset. A cow suddenly sprints across the meadow, kicking up dirt.",
+                files: {
+                    base: ["00000_26.mp4", "00000_19.mp4", "00000_13.mp4"],
+                    cads: ["00000_26.mp4", "00000_19.mp4", "00000_13.mp4"],
+                    ours: ["00000_26.mp4", "00000_19.mp4", "00000_13.mp4"]
+                }
+            },
+            {
+                id: "06_stone",
+                prompt: "Stonehenge at golden hour. Ravens burst into the sky as a robed figure watches.",
+                files: {
+                    base: ["00002_21.mp4", "00002_18.mp4", "00002_04.mp4"],
+                    cads: ["00002_21.mp4", "00002_18.mp4", "00002_04.mp4"],
+                    ours: ["00002_21.mp4", "00002_18.mp4", "00002_04.mp4"]
+                }
+            },
+            {
+                id: "07_beach2",
+                prompt: "Pixel-art coastal beach with pastel clouds, palm trees, sailboats, and a warm sunset.",
+                files: {
+                    base: ["00000_25.mp4", "00000_05.mp4", "00000_02.mp4"],
+                    cads: ["00000_25.mp4", "00000_05.mp4", "00000_02.mp4"],
+                    ours: ["00000_25.mp4", "00000_05.mp4", "00000_02.mp4"]
+                }
+            },
+            {
+                id: "08_space",
+                prompt: "A CG astronaut in space with a glowing green helmet does a fast 360 spin.",
+                files: {
+                    base: ["00002_84.mp4", "00002_40.mp4", "00002_39.mp4"],
+                    cads: ["00002_84.mp4", "00002_40.mp4", "00002_39.mp4"],
+                    ours: ["00002_84.mp4", "00002_40.mp4", "00002_39.mp4"]
+                }
+            }
+        ];
+
+        const methodLabels = {
+            base: "Base Model",
+            cads: "Condition Annealing",
+            ours: "Scale-Travel"
+        };
+        const videoGallery = document.getElementById("video-gallery");
+
+        videoCases.forEach((videoCase, caseIndex) => {
+            const card = document.createElement("article");
+            card.className = "video-case";
+            const header = document.createElement("header");
+            header.className = "video-case-header";
+            header.innerHTML = `<span class="video-case-number">${String(caseIndex).padStart(2, "0")}</span><div><span class="video-case-kicker">Prompt ${String(caseIndex + 1).padStart(2, "0")}</span><h4></h4></div>`;
+            header.querySelector("h4").textContent = videoCase.prompt;
+            card.appendChild(header);
+
+            const matrix = document.createElement("div");
+            matrix.className = "video-matrix";
+            Object.entries(videoCase.files).forEach(([method, files]) => {
+                const row = document.createElement("div");
+                row.className = `video-method-row video-method-row--${method}`;
+                row.innerHTML = `<div class="video-method-label">${methodLabels[method]}</div><div class="video-thumb-grid"></div>`;
+                const thumbGrid = row.querySelector(".video-thumb-grid");
+                files.forEach((file, sampleIndex) => {
+                    const video = document.createElement("video");
+                    video.controls = true;
+                    video.loop = true;
+                    video.muted = true;
+                    video.playsInline = true;
+                    video.preload = "metadata";
+                    video.setAttribute("aria-label", `${methodLabels[method]} sample ${sampleIndex + 1}: ${videoCase.prompt}`);
+                    video.src = encodeURI(`assets/qualitatives/video/${videoCase.id}/${method}/videos/${file}`);
+                    thumbGrid.appendChild(video);
+                });
+                matrix.appendChild(row);
+            });
+            card.appendChild(matrix);
+            videoGallery.appendChild(card);
+        });
+    </script>
+</body>
+
+</html>
