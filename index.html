@@ -95,60 +95,116 @@
 
         <section id="method">
             <div class="container">
-                <h2>Method</h2>
+                <h2>2-Stage Pipeline</h2>
                 <p class="section-intro">
                     DiverseVAR runs in two stages. The first weakens the text condition early in generation so that
                     different seeds stop converging on the same image. The second sends the resulting sample back
                     through the multi-scale representation that VAR already uses, and regenerates its finer scales.
                 </p>
 
-                <figure class="wide-figure">
-                    <img src="assets/images/diversity_enhancement.png"
-                        alt="Diversity enhancement strategies for visual autoregressive models">
-                    <figcaption>
-                        Two ways to loosen the condition: CFG scheduling on the left, condition annealing on the right.
-                        Annealing can perturb the text embedding or the &lt;SOS&gt; token, and the text embedding gave
-                        the larger diversity gain.
-                    </figcaption>
-                </figure>
+                <article class="stage-card stage-card--anneal">
+                    <header class="stage-head">
+                        <span class="stage-badge">1</span>
+                        <h3>Condition Annealing</h3>
+                        <p>Start with weak conditioning and gradually strengthen it across scales.</p>
+                    </header>
+                    <p class="box-label stage-label">
+                        Where the noise goes: (a) CFG scheduling mixes the conditional and unconditional logits,
+                        (b) condition annealing perturbs the &lt;SOS&gt; token or the text embedding.
+                    </p>
+                    <div class="stage-body">
+                        <figure class="stage-figure">
+                            <img src="assets/images/diversity_enhancement.png"
+                                alt="CFG scheduling and condition annealing for visual autoregressive models">
+                        </figure>
+                        <aside class="tradeoff">
+                            <h4>Trade-off</h4>
+                            <p class="box-label">What weakening the text condition buys, and what it costs.</p>
+                            <ul>
+                                <li class="plus">No training and almost no extra inference cost</li>
+                                <li class="plus">Largest diversity gain among the injection points we tested</li>
+                                <li class="minus">Sharp drop in image quality</li>
+                            </ul>
+                        </aside>
+                    </div>
+                </article>
 
-                <div class="method-grid">
-                    <article>
-                        <h3>1. Condition annealing</h3>
-                        <p>
-                            The text condition dominates VAR sampling, so changing the random seed barely changes the
-                            result. Condition annealing adds noise to the text embedding over the early scales, which
-                            leaves the model free to commit to a different layout or style for the same prompt.
-                        </p>
-                    </article>
-                    <article>
-                        <h3>2. Scale-travel</h3>
-                        <p>
-                            An annealed sample is varied but damaged. Scale-travel encodes it back into the multi-scale
-                            token pyramid, keeps the coarse tokens that carry the global structure, and re-runs
-                            next-scale prediction from an intermediate scale. That repairs local artifacts and leaves
-                            the structure, and with it the variation, in place.
-                        </p>
-                    </article>
-                </div>
-
-                <figure class="wide-figure">
-                    <img src="assets/images/stage2_pipeline.png" alt="Stage-2 scale-travel refinement pipeline">
-                    <figcaption>
-                        Scale-travel in detail: predict up to scale <em>l</em>, upsample and aggregate the token maps
-                        into a feature map, re-encode it at scale <em>m</em>, then continue next-scale prediction from
-                        <em>m</em> to <em>K</em>.
-                    </figcaption>
-                </figure>
-
-                <figure class="wide-figure figure-plain">
-                    <img src="assets/images/main-pipeline-quali.png"
-                        alt="Base model, condition annealing, and scale-travel samples for one skateboard prompt">
-                    <figcaption>
-                        The same prompt through both stages. The base model repeats one composition, annealing breaks
-                        that repetition but damages the boards marked in red, and scale-travel fixes those regions.
-                    </figcaption>
-                </figure>
+                <article class="stage-card stage-card--travel">
+                    <header class="stage-head">
+                        <span class="stage-badge">2</span>
+                        <h3>Scale-Travel</h3>
+                        <p>Travel back to an earlier stage and regenerate to refine visual artifacts.</p>
+                    </header>
+                    <p class="stage-banner">
+                        <span class="plus-mark">(+)</span> Refines visual artifacts with a slight diversity drop.
+                        <span class="minus-mark">(&minus;)</span> Adds only 20% inference overhead.
+                    </p>
+                    <figure class="stage-figure stage-figure--wide">
+                        <figcaption class="box-label">
+                            Run next-scale prediction to scale <em>l</em>, upsample and aggregate the
+                            token maps into a feature map, re-encode it at scale <em>m</em>, then predict on to
+                            <em>K</em>.
+                        </figcaption>
+                        <img src="assets/images/stage2_pipeline.png" alt="Scale-travel refinement pipeline">
+                    </figure>
+                    <div class="stage-body stage-body--travel">
+                        <figure class="algo-figure">
+                            <figcaption class="box-label">
+                                The scale-travel step itself, which is VAR's multi-scale encoding with the loop
+                                stopped at <em>m</em> instead of <em>K</em>.
+                            </figcaption>
+                            <img src="assets/images/diversevar-algo2-trans.png"
+                                alt="Algorithm 2, Scale-Travel pseudocode">
+                        </figure>
+                        <div class="cost-box">
+                            <h4>Inference time</h4>
+                            <p class="box-label">
+                                Seconds per image on an RTX 3090, batch size 1, averaged over 100 samples.
+                            </p>
+                            <table class="cost-table">
+                                <thead>
+                                    <tr>
+                                        <th>Method</th>
+                                        <th>Time</th>
+                                        <th>Slower</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Infinity</td>
+                                        <td>2.115s</td>
+                                        <td>&ndash;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>+ Cond. Anneal.</td>
+                                        <td>2.266s</td>
+                                        <td>&times;1.07</td>
+                                    </tr>
+                                    <tr class="ours">
+                                        <td>+ Scale-Travel</td>
+                                        <td>2.638s</td>
+                                        <td>&times;1.24</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Switti</td>
+                                        <td>1.642s</td>
+                                        <td>&ndash;</td>
+                                    </tr>
+                                    <tr>
+                                        <td>+ Cond. Anneal.</td>
+                                        <td>1.692s</td>
+                                        <td>&times;1.03</td>
+                                    </tr>
+                                    <tr class="ours">
+                                        <td>+ Scale-Travel</td>
+                                        <td>1.892s</td>
+                                        <td>&times;1.15</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </article>
             </div>
         </section>
 
@@ -161,12 +217,13 @@
                     <a href="qualitatives.html">qualitatives page</a>.
                 </p>
 
-                <figure class="wide-figure">
-                    <img src="assets/images/qualitative_comparison.png"
-                        alt="Qualitative comparison of Infinity, condition annealing, and DiverseVAR">
+                <figure class="wide-figure figure-plain">
+                    <img src="assets/images/main-pipeline-quali.png"
+                        alt="Base model, condition annealing, and scale-travel samples for one skateboard prompt">
                     <figcaption>
-                        Infinity gives four near-copies per prompt. Condition annealing separates them but leaves the
-                        artifacts marked in red. Adding scale-travel keeps the separation and repairs those regions.
+                        One prompt through both stages of DiverseVAR. Infinity repeats a single composition, condition
+                        annealing breaks that repetition but damages the boards marked in red, and scale-travel repairs
+                        those regions without pulling the samples back together.
                     </figcaption>
                 </figure>
 
@@ -222,7 +279,7 @@
                                 <td>8.13</td>
                             </tr>
                             <tr class="ours">
-                                <td>+ Scale-Travel</td>
+                                <td>+ Scale-Travel (Ours)</td>
                                 <td>15.28</td>
                                 <td>1.08</td>
                                 <td>0.48</td>
@@ -255,7 +312,7 @@
                                 <td>7.74</td>
                             </tr>
                             <tr class="ours">
-                                <td>+ Scale-Travel</td>
+                                <td>+ Scale-Travel (Ours)</td>
                                 <td>17.30</td>
                                 <td>0.93</td>
                                 <td>0.56</td>

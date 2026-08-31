@@ -18,13 +18,7 @@
     <header class="hero qualitative-hero">
         <div class="container hero-inner">
             <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> DiverseVAR</a>
-            <span class="venue">Qualitative comparisons</span>
-            <h1>Samples per prompt, stage by stage</h1>
-            <p class="qualitative-hero-intro">
-                Every panel below fixes the prompt and varies only the random seed. The three stages are the base
-                model, condition annealing on the text embedding, and condition annealing followed by scale-travel.
-                Images come from Infinity and Switti, videos from InfinityStar.
-            </p>
+            <h1>Additional Qualitative</h1>
             <div class="links">
                 <a href="#image-gallery" class="btn">
                     <span class="icon"><i class="fas fa-image"></i></span>
@@ -46,18 +40,15 @@
         <section id="image-gallery">
             <div class="container">
                 <div class="group-heading">
-                    <div>
-                        <span class="group-kicker">Text-to-image</span>
-                        <h2>Images</h2>
-                    </div>
-                    <p>Five prompts per dataset, six samples per stage.</p>
+                    <span class="group-kicker">Text-to-image</span>
+                    <h2>Images</h2>
                 </div>
 
                 <div class="model-switcher">
                     <input type="radio" name="image-model" id="image-model-infinity" checked>
                     <input type="radio" name="image-model" id="image-model-switti">
+                    <span class="switcher-label">Base model</span>
                     <div class="model-switcher-tabs" role="tablist" aria-label="Base model">
-                        <span class="switcher-label">Base model</span>
                         <label for="image-model-infinity" role="tab">Infinity</label>
                         <label for="image-model-switti" role="tab">Switti</label>
                     </div>
@@ -69,12 +60,17 @@
         <section id="video-gallery">
             <div class="container">
                 <div class="group-heading">
-                    <div>
-                        <span class="group-kicker">Text-to-video</span>
-                        <h2>Videos</h2>
-                    </div>
-                    <p>Nine prompts, three samples per stage.</p>
+                    <span class="group-kicker">Text-to-video</span>
+                    <h2>Videos</h2>
                 </div>
+
+                <div class="model-switcher">
+                    <span class="switcher-label">Base model</span>
+                    <div class="model-switcher-tabs">
+                        <span class="model-tab-static">InfinityStar</span>
+                    </div>
+                </div>
+
                 <div id="video-list" class="video-grid"></div>
             </div>
         </section>
@@ -141,10 +137,11 @@
         ];
 
         const stages = [
-            { id: "base", label: "Base model" },
-            { id: "condition", label: "Condition annealing" },
-            { id: "scale", label: "Scale-travel" }
+            { id: "base", label: "Base Model", added: false },
+            { id: "condition", label: "Condition Annealing", added: true },
+            { id: "scale", label: "Scale-Travel (Ours)", added: true }
         ];
+        const plusMark = '<span class="stage-plus" aria-hidden="true">+</span>';
         const imageModelPanels = document.getElementById("image-model-panels");
 
         imageModels.forEach(model => {
@@ -158,7 +155,7 @@
                 datasetCard.className = "dataset-card";
                 const datasetHeader = document.createElement("header");
                 datasetHeader.className = "dataset-card-header";
-                datasetHeader.innerHTML = `<div><span class="dataset-eyebrow">${dataset.name}</span><h3>${model.name}</h3></div><span class="dataset-tag">5 prompts</span>`;
+                datasetHeader.innerHTML = `<span class="dataset-eyebrow">${dataset.name}</span><h3>${model.name}</h3>`;
                 datasetCard.appendChild(datasetHeader);
 
                 const sampleStack = document.createElement("div");
@@ -169,10 +166,7 @@
 
                     const promptLine = document.createElement("p");
                     promptLine.className = "sample-prompt";
-                    const promptIndexLabel = document.createElement("span");
-                    promptIndexLabel.textContent = String(promptIndex + 1).padStart(2, "0");
-                    promptLine.appendChild(promptIndexLabel);
-                    promptLine.append(document.createTextNode(prompt));
+                    promptLine.textContent = prompt;
                     sample.appendChild(promptLine);
 
                     const resultGrid = document.createElement("div");
@@ -180,7 +174,7 @@
                     stages.forEach(stage => {
                         const result = document.createElement("figure");
                         result.className = `result-panel result-panel--${stage.id}`;
-                        result.innerHTML = `<figcaption>${stage.label}</figcaption><div class="result-crop result-crop--${stage.id}"></div>`;
+                        result.innerHTML = `<figcaption>${stage.added ? plusMark : ""}${stage.label}</figcaption><div class="result-crop result-crop--${stage.id}"></div>`;
                         const image = document.createElement("img");
                         image.src = `assets/qualitatives/image/${dataset.path}/${promptIndex}.jpg`;
                         image.alt = `${model.name}, ${stage.label}, samples for: ${prompt}`;
@@ -283,9 +277,9 @@
         ];
 
         const methodLabels = {
-            base: "Base model",
-            cads: "Condition annealing",
-            ours: "Scale-travel"
+            base: "Base Model",
+            cads: "Condition Annealing",
+            ours: "Scale-Travel (Ours)"
         };
         const videoList = document.getElementById("video-list");
 
@@ -295,10 +289,7 @@
 
             const promptLine = document.createElement("p");
             promptLine.className = "sample-prompt";
-            const promptIndexLabel = document.createElement("span");
-            promptIndexLabel.textContent = String(caseIndex + 1).padStart(2, "0");
-            promptLine.appendChild(promptIndexLabel);
-            promptLine.append(document.createTextNode(videoCase.prompt));
+            promptLine.textContent = videoCase.prompt;
             card.appendChild(promptLine);
 
             const matrix = document.createElement("div");
@@ -306,7 +297,7 @@
             Object.entries(videoCase.files).forEach(([method, files]) => {
                 const row = document.createElement("div");
                 row.className = `video-method-row video-method-row--${method}`;
-                row.innerHTML = `<div class="video-method-label">${methodLabels[method]}</div><div class="video-thumb-grid"></div>`;
+                row.innerHTML = `<div class="video-method-label">${method === "base" ? "" : plusMark}${methodLabels[method]}</div><div class="video-thumb-grid"></div>`;
                 const thumbGrid = row.querySelector(".video-thumb-grid");
                 files.forEach((file, sampleIndex) => {
                     const video = document.createElement("video");
