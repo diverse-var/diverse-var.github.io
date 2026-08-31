@@ -39,7 +39,7 @@
                     <span class="icon"><i class="fab fa-github"></i></span>
                     Code Coming Soon
                 </a>
-                <a href="qualitatives.html" class="btn btn-accent">
+                <a href="qualitatives.html" class="btn">
                     <span class="icon"><i class="fas fa-images"></i></span>
                     Qualitatives
                 </a>
@@ -52,16 +52,16 @@
             <div class="container">
                 <h2>TL;DR</h2>
                 <p class="lead">
-                    <strong>DiverseVAR</strong> is a training-free test-time framework that increases per-prompt
-                    diversity in text-conditioned visual autoregressive models while preserving image and video quality.
-                    It combines text-embedding noise injection with <strong>scale-travel</strong>, a multi-scale latent
-                    refinement step that recovers visual fidelity from diverse but degraded samples.
+                    <strong>DiverseVAR</strong> makes text-conditioned visual autoregressive models produce different
+                    outputs for the same prompt, with no retraining and little extra compute. Noise on the text
+                    embedding creates the variation, and <strong>scale-travel</strong> repairs the image quality that
+                    the noise costs.
                 </p>
                 <figure class="wide-figure">
                     <img src="assets/images/diversevar_teaser.png" alt="DiverseVAR teaser comparison">
                     <figcaption>
-                        VAR image and video models often produce near-identical outputs for the same prompt. DiverseVAR
-                        introduces diverse samples, then refines artifacts while keeping semantic variation.
+                        Infinity and InfinityStar return nearly the same output for one prompt no matter which seed we
+                        use. DiverseVAR pulls the samples apart and then cleans up what the perturbation broke.
                     </figcaption>
                 </figure>
             </div>
@@ -97,37 +97,37 @@
             <div class="container">
                 <h2>Method</h2>
                 <p class="section-intro">
-                    DiverseVAR follows a diversify-then-refine pipeline. It first weakens the dominant text condition
-                    during early VAR generation to unlock multiple modes, then uses the multi-scale structure of VAR to
-                    rebuild clean samples from coarse tokens.
+                    DiverseVAR runs in two stages. The first weakens the text condition early in generation so that
+                    different seeds stop converging on the same image. The second sends the resulting sample back
+                    through the multi-scale representation that VAR already uses, and regenerates its finer scales.
                 </p>
 
                 <figure class="wide-figure">
                     <img src="assets/images/diversity_enhancement.png"
                         alt="Diversity enhancement strategies for visual autoregressive models">
                     <figcaption>
-                        We compare CFG scheduling and condition annealing for diversity enhancement. Text-embedding
-                        noise injection gives the strongest diversity gains among the tested strategies.
+                        Two ways to loosen the condition: CFG scheduling on the left, condition annealing on the right.
+                        Annealing can perturb the text embedding or the &lt;SOS&gt; token, and the text embedding gave
+                        the larger diversity gain.
                     </figcaption>
                 </figure>
 
                 <div class="method-grid">
                     <article>
-                        <h3>1. Inject Diversity</h3>
+                        <h3>1. Condition annealing</h3>
                         <p>
-                            VAR generation is strongly governed by the text condition, which can collapse different
-                            random seeds into highly similar outputs. DiverseVAR perturbs the text embedding during
-                            early scales, encouraging the model to explore different plausible visual modes for the same
-                            prompt.
+                            The text condition dominates VAR sampling, so changing the random seed barely changes the
+                            result. Condition annealing adds noise to the text embedding over the early scales, which
+                            leaves the model free to commit to a different layout or style for the same prompt.
                         </p>
                     </article>
                     <article>
-                        <h3>2. Refine by Scale-Travel</h3>
+                        <h3>2. Scale-travel</h3>
                         <p>
-                            After condition annealing generates a diverse sample, scale-travel maps it back into the
-                            multi-scale latent representation. DiverseVAR keeps the coarse tokens that capture global
-                            semantics, returns to an intermediate scale, and regenerates later scales to repair local
-                            artifacts without collapsing the new variation.
+                            An annealed sample is varied but damaged. Scale-travel encodes it back into the multi-scale
+                            token pyramid, keeps the coarse tokens that carry the global structure, and re-runs
+                            next-scale prediction from an intermediate scale. That repairs local artifacts and leaves
+                            the structure, and with it the variation, in place.
                         </p>
                     </article>
                 </div>
@@ -135,41 +135,50 @@
                 <figure class="wide-figure">
                     <img src="assets/images/stage2_pipeline.png" alt="Stage-2 scale-travel refinement pipeline">
                     <figcaption>
-                        Stage 2 of DiverseVAR refines diverse but degraded outputs by multi-scale encoding, selecting
-                        intermediate coarse tokens, and resuming VAR generation from that scale to reconstruct clean
-                        high-resolution details.
+                        Scale-travel in detail: predict up to scale <em>l</em>, upsample and aggregate the token maps
+                        into a feature map, re-encode it at scale <em>m</em>, then continue next-scale prediction from
+                        <em>m</em> to <em>K</em>.
+                    </figcaption>
+                </figure>
+
+                <figure class="wide-figure figure-plain">
+                    <img src="assets/images/main-pipeline-quali.png"
+                        alt="Base model, condition annealing, and scale-travel samples for one skateboard prompt">
+                    <figcaption>
+                        The same prompt through both stages. The base model repeats one composition, annealing breaks
+                        that repetition but damages the boards marked in red, and scale-travel fixes those regions.
                     </figcaption>
                 </figure>
             </div>
         </section>
 
-
         <section id="results">
             <div class="container">
                 <h2>Results</h2>
                 <p class="section-intro">
-                    DiverseVAR improves the diversity-quality trade-off across text-to-image VAR models such as Infinity
-                    and Switti, and extends to text-to-video generation with InfinityStar.
+                    We evaluate DiverseVAR on Infinity and Switti for text-to-image generation and on InfinityStar for
+                    text-to-video generation, using MJHQ-30K and MS-COCO prompts. More samples are on the
+                    <a href="qualitatives.html">qualitatives page</a>.
                 </p>
 
                 <figure class="wide-figure">
                     <img src="assets/images/qualitative_comparison.png"
                         alt="Qualitative comparison of Infinity, condition annealing, and DiverseVAR">
                     <figcaption>
-                        Infinity produces low-variation samples. Condition annealing increases diversity but introduces
-                        visible artifacts. DiverseVAR preserves the new variations while repairing visual quality.
+                        Infinity gives four near-copies per prompt. Condition annealing separates them but leaves the
+                        artifacts marked in red. Adding scale-travel keeps the separation and repairs those regions.
                     </figcaption>
                 </figure>
 
                 <figure class="wide-figure">
                     <img src="assets/images/pareto_final.png" alt="Pareto fronts for diversity-quality trade-off">
                     <figcaption>
-                        Across MJHQ-30K and MS-COCO, DiverseVAR consistently moves the Pareto frontier by balancing
-                        diversity metrics with quality and alignment metrics.
+                        ImageReward against mean LPIPS on MJHQ-30K and MS-COCO. At equal diversity our curve sits above
+                        the condition-annealing curves, and it keeps climbing where they fall off.
                     </figcaption>
                 </figure>
 
-                <h3>Quantitative Comparisons</h3>
+                <h3>Quantitative comparisons</h3>
                 <div class="table-wrap" role="region" aria-label="Quantitative results table" tabindex="0">
                     <table>
                         <thead>
