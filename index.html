@@ -19,8 +19,8 @@
 <body>
     <header class="hero">
         <div class="container hero-inner">
-            <h2>DiverseVAR: Balancing Diversity and Quality of Next-Scale Visual Autoregressive Models</h1>
-            <h3>ECCV 2026</h2>
+            <h1>DiverseVAR: Balancing Diversity and Quality of Next-Scale Visual Autoregressive Models</h1>
+            <h3 class="venue">ECCV 2026</h3>
             <div class="authors">
                 <p>
                     <a href="https://uygnim99.github.io/" target="_blank">Mingue Park</a>*,
@@ -136,6 +136,206 @@
                         high-resolution details.
                     </figcaption>
                 </figure>
+            </div>
+        </section>
+
+        <section id="qualitatives" class="showcase-section">
+            <div class="container">
+                <div class="showcase-header">
+                    <span class="showcase-kicker">Qualitative Gallery</span>
+                    <h2>One prompt. Many plausible worlds.</h2>
+                    <p class="showcase-intro">
+                        DiverseVAR turns a single text condition into a broader set of visual and temporal
+                        possibilities, then keeps the details sharp. Explore the samples below to see the
+                        diversity-quality trade-off across images and videos.
+                    </p>
+                    <nav class="showcase-nav" aria-label="Qualitative gallery navigation">
+                        <a href="#image-gallery"><span>01</span> Images</a>
+                        <a href="#video-gallery"><span>02</span> Videos</a>
+                    </nav>
+                </div>
+
+                <figure class="pipeline-figure">
+                    <div class="pipeline-figure-image">
+                        <img src="assets/images/main-pipeline-quali.png"
+                            alt="DiverseVAR pipeline from base samples through condition annealing to scale-travel">
+                    </div>
+                    <figcaption>
+                        DiverseVAR first unlocks different visual modes with condition annealing, then uses
+                        scale-travel to restore clean details without collapsing the variation.
+                    </figcaption>
+                </figure>
+
+                <div id="image-gallery" class="showcase-group">
+                    <div class="group-heading">
+                        <div>
+                            <span class="group-kicker">01 / Text-to-image</span>
+                            <h3>More modes from the same prompt</h3>
+                        </div>
+                        <p>Each strip shows a prompt rendered across many random seeds.</p>
+                    </div>
+
+                    <div class="image-dataset-grid">
+                        <article class="dataset-card">
+                            <header class="dataset-card-header">
+                                <div>
+                                    <span class="dataset-eyebrow">MJHQ-30K</span>
+                                    <h4>Infinity</h4>
+                                </div>
+                                <span class="dataset-tag">5 prompts</span>
+                            </header>
+                            <div class="sample-stack">
+                                <figure class="sample-case">
+                                    <figcaption><span>01</span> a hamster dressed in CIA outfit</figcaption>
+                                    <img src="assets/qualitatives/image/mjhq/0.jpg"
+                                        alt="Infinity samples for a hamster dressed in CIA outfit" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>02</span> tiger cub playing with soccer ball</figcaption>
+                                    <img src="assets/qualitatives/image/mjhq/1.jpg"
+                                        alt="Infinity samples for a tiger cub playing with a soccer ball" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>03</span> dinosaurs with sunglasses partying, 80s style</figcaption>
+                                    <img src="assets/qualitatives/image/mjhq/2.jpg"
+                                        alt="Infinity samples of partying dinosaurs wearing sunglasses" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>04</span> vintage-inspired 1970s Disney-style animals</figcaption>
+                                    <img src="assets/qualitatives/image/mjhq/3.jpg"
+                                        alt="Infinity samples of vintage-inspired animals" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>05</span> a Velociraptor in Yellowstone National Park</figcaption>
+                                    <img src="assets/qualitatives/image/mjhq/4.jpg"
+                                        alt="Infinity samples of a Velociraptor in Yellowstone National Park" loading="lazy">
+                                </figure>
+                            </div>
+                        </article>
+
+                        <article class="dataset-card dataset-card--switti">
+                            <header class="dataset-card-header">
+                                <div>
+                                    <span class="dataset-eyebrow">MJHQ-30K</span>
+                                    <h4>Switti</h4>
+                                </div>
+                                <span class="dataset-tag">5 prompts</span>
+                            </header>
+                            <div class="sample-stack">
+                                <figure class="sample-case">
+                                    <figcaption><span>01</span> a hamster dressed in CIA outfit</figcaption>
+                                    <img src="assets/qualitatives/image/mjhq_switti/0.jpg"
+                                        alt="Switti samples for a hamster dressed in CIA outfit" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>02</span> tiger cub playing with soccer ball</figcaption>
+                                    <img src="assets/qualitatives/image/mjhq_switti/1.jpg"
+                                        alt="Switti samples for a tiger cub playing with a soccer ball" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>03</span> dinosaurs with sunglasses partying, 80s style</figcaption>
+                                    <img src="assets/qualitatives/image/mjhq_switti/2.jpg"
+                                        alt="Switti samples of partying dinosaurs wearing sunglasses" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>04</span> vintage-inspired 1970s Disney-style animals</figcaption>
+                                    <img src="assets/qualitatives/image/mjhq_switti/3.jpg"
+                                        alt="Switti samples of vintage-inspired animals" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>05</span> a Velociraptor in Yellowstone National Park</figcaption>
+                                    <img src="assets/qualitatives/image/mjhq_switti/4.jpg"
+                                        alt="Switti samples of a Velociraptor in Yellowstone National Park" loading="lazy">
+                                </figure>
+                            </div>
+                        </article>
+
+                        <article class="dataset-card">
+                            <header class="dataset-card-header">
+                                <div>
+                                    <span class="dataset-eyebrow">MS-COCO</span>
+                                    <h4>Infinity</h4>
+                                </div>
+                                <span class="dataset-tag">5 prompts</span>
+                            </header>
+                            <div class="sample-stack">
+                                <figure class="sample-case">
+                                    <figcaption><span>01</span> a man with a skateboard near graffiti</figcaption>
+                                    <img src="assets/qualitatives/image/mscoco/0.jpg"
+                                        alt="Infinity samples for a man with a skateboard near graffiti" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>02</span> people walking around a lush green field</figcaption>
+                                    <img src="assets/qualitatives/image/mscoco/1.jpg"
+                                        alt="Infinity samples of people walking around a green field" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>03</span> a man standing next to a train</figcaption>
+                                    <img src="assets/qualitatives/image/mscoco/2.jpg"
+                                        alt="Infinity samples of a man standing next to a train" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>04</span> a man and woman cutting a cake together</figcaption>
+                                    <img src="assets/qualitatives/image/mscoco/3.jpg"
+                                        alt="Infinity samples of a man and woman cutting a cake" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>05</span> a cat resting in the shade of luggage</figcaption>
+                                    <img src="assets/qualitatives/image/mscoco/4.jpg"
+                                        alt="Infinity samples of a cat resting beside luggage" loading="lazy">
+                                </figure>
+                            </div>
+                        </article>
+
+                        <article class="dataset-card dataset-card--switti">
+                            <header class="dataset-card-header">
+                                <div>
+                                    <span class="dataset-eyebrow">MS-COCO</span>
+                                    <h4>Switti</h4>
+                                </div>
+                                <span class="dataset-tag">5 prompts</span>
+                            </header>
+                            <div class="sample-stack">
+                                <figure class="sample-case">
+                                    <figcaption><span>01</span> a man with a skateboard near graffiti</figcaption>
+                                    <img src="assets/qualitatives/image/mscoco_switti/0.jpg"
+                                        alt="Switti samples for a man with a skateboard near graffiti" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>02</span> people walking around a lush green field</figcaption>
+                                    <img src="assets/qualitatives/image/mscoco_switti/1.jpg"
+                                        alt="Switti samples of people walking around a green field" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>03</span> a man standing next to a train</figcaption>
+                                    <img src="assets/qualitatives/image/mscoco_switti/2.jpg"
+                                        alt="Switti samples of a man standing next to a train" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>04</span> a man and woman cutting a cake together</figcaption>
+                                    <img src="assets/qualitatives/image/mscoco_switti/3.jpg"
+                                        alt="Switti samples of a man and woman cutting a cake" loading="lazy">
+                                </figure>
+                                <figure class="sample-case">
+                                    <figcaption><span>05</span> a cat resting in the shade of luggage</figcaption>
+                                    <img src="assets/qualitatives/image/mscoco_switti/4.jpg"
+                                        alt="Switti samples of a cat resting beside luggage" loading="lazy">
+                                </figure>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="showcase-group video-showcase">
+                    <div class="group-heading">
+                        <div>
+                            <span class="group-kicker">02 / Text-to-video</span>
+                            <h3>Motion that stays diverse</h3>
+                        </div>
+                        <p>Compare the same temporal prompt across the base model, condition annealing, and DiverseVAR.</p>
+                    </div>
+                    <div id="video-gallery" class="video-grid" aria-live="polite"></div>
+                </div>
             </div>
         </section>
 
@@ -269,6 +469,137 @@
             </div>
         </section>
     </main>
+    <script>
+        const videoCases = [
+            {
+                id: "00_teaser",
+                prompt: "A flower changes from purple to orange.",
+                files: {
+                    base: ["A flower changes from purple to orange.-0.mp4", "A flower changes from purple to orange.-1.mp4", "A flower changes from purple to orange.-2.mp4"],
+                    cads: ["A flower changes from purple to orange.-0.mp4", "A flower changes from purple to orange.-1.mp4", "A flower changes from purple to orange.-2.mp4"],
+                    ours: ["A flower changes from purple to orange.-0.mp4", "A flower changes from purple to orange.-1.mp4", "A flower changes from purple to orange.-2.mp4"]
+                }
+            },
+            {
+                id: "01_fox",
+                prompt: "A white fox stands on a mossy rock in a moonlit snowy forest.",
+                files: {
+                    base: ["00001_20.mp4", "00001_12.mp4", "00001_10.mp4"],
+                    cads: ["00000_20.mp4", "00000_12.mp4", "00000_10.mp4"],
+                    ours: ["00001_20.mp4", "00001_12.mp4", "00001_10.mp4"]
+                }
+            },
+            {
+                id: "02_moon",
+                prompt: "A nighttime scene transitions from a warm golden moon to a cool silvery moon.",
+                files: {
+                    base: ["The moon changes from yellow to silver.-0.mp4", "The moon changes from yellow to silver.-1.mp4", "The moon changes from yellow to silver.-2.mp4"],
+                    cads: ["The moon changes from yellow to silver.-0.mp4", "The moon changes from yellow to silver.-1.mp4", "The moon changes from yellow to silver.-2.mp4"],
+                    ours: ["The moon changes from yellow to silver.-0.mp4", "The moon changes from yellow to silver.-1.mp4", "The moon changes from yellow to silver.-2.mp4"]
+                }
+            },
+            {
+                id: "03_beach",
+                prompt: "Pixel art beach at sunset. A striped beach ball rolls along the shore.",
+                files: {
+                    base: ["00000_80.mp4", "00000_42.mp4", "00000_27.mp4"],
+                    cads: ["00000_80.mp4", "00000_42.mp4", "00000_27.mp4"],
+                    ours: ["00004_80.mp4", "00004_42.mp4", "00004_27.mp4"]
+                }
+            },
+            {
+                id: "04_oasis",
+                prompt: "Desert oasis at sunset. A camel walks to the pond as the camera slowly dollies in.",
+                files: {
+                    base: ["00000_84.mp4", "00000_28.mp4", "00000_16.mp4"],
+                    cads: ["00000_84.mp4", "00000_28.mp4", "00000_16.mp4"],
+                    ours: ["00000_84.mp4", "00000_28.mp4", "00000_16.mp4"]
+                }
+            },
+            {
+                id: "05_cow",
+                prompt: "Red barn at sunset. A cow suddenly sprints across the meadow, kicking up dirt.",
+                files: {
+                    base: ["00000_26.mp4", "00000_19.mp4", "00000_13.mp4"],
+                    cads: ["00000_26.mp4", "00000_19.mp4", "00000_13.mp4"],
+                    ours: ["00000_26.mp4", "00000_19.mp4", "00000_13.mp4"]
+                }
+            },
+            {
+                id: "06_stone",
+                prompt: "Stonehenge at golden hour. Ravens burst into the sky as a robed figure watches.",
+                files: {
+                    base: ["00002_21.mp4", "00002_18.mp4", "00002_04.mp4"],
+                    cads: ["00002_21.mp4", "00002_18.mp4", "00002_04.mp4"],
+                    ours: ["00002_21.mp4", "00002_18.mp4", "00002_04.mp4"]
+                }
+            },
+            {
+                id: "07_beach2",
+                prompt: "Pixel-art coastal beach with pastel clouds, palm trees, sailboats, and a warm sunset.",
+                files: {
+                    base: ["00000_25.mp4", "00000_05.mp4", "00000_02.mp4"],
+                    cads: ["00000_25.mp4", "00000_05.mp4", "00000_02.mp4"],
+                    ours: ["00000_25.mp4", "00000_05.mp4", "00000_02.mp4"]
+                }
+            },
+            {
+                id: "08_space",
+                prompt: "A CG astronaut in space with a glowing green helmet does a fast 360 spin.",
+                files: {
+                    base: ["00002_84.mp4", "00002_40.mp4", "00002_39.mp4"],
+                    cads: ["00002_84.mp4", "00002_40.mp4", "00002_39.mp4"],
+                    ours: ["00002_84.mp4", "00002_40.mp4", "00002_39.mp4"]
+                }
+            }
+        ];
+
+        const methodLabels = {
+            base: "Base",
+            cads: "Cond. Anneal.",
+            ours: "DiverseVAR"
+        };
+        const videoGallery = document.getElementById("video-gallery");
+
+        videoCases.forEach((videoCase, caseIndex) => {
+            const card = document.createElement("article");
+            card.className = `video-case${caseIndex === 0 ? " video-case--featured" : ""}`;
+            card.innerHTML = `
+                <header class="video-case-header">
+                    <span class="video-case-number">${String(caseIndex).padStart(2, "0")}</span>
+                    <div>
+                        <span class="video-case-kicker">Prompt ${String(caseIndex + 1).padStart(2, "0")}</span>
+                        <h4>${videoCase.prompt}</h4>
+                    </div>
+                </header>
+                <div class="video-row"></div>
+            `;
+
+            const videoRow = card.querySelector(".video-row");
+            Object.entries(videoCase.files).forEach(([method, files]) => {
+                const methodCard = document.createElement("figure");
+                methodCard.className = `video-method video-method--${method}`;
+                methodCard.innerHTML = `
+                    <figcaption>${methodLabels[method]}</figcaption>
+                    <div class="video-frame"></div>
+                `;
+                const frame = methodCard.querySelector(".video-frame");
+                files.forEach((file, sampleIndex) => {
+                    const video = document.createElement("video");
+                    video.controls = true;
+                    video.loop = true;
+                    video.muted = true;
+                    video.playsInline = true;
+                    video.preload = "metadata";
+                    video.setAttribute("aria-label", `${methodLabels[method]} sample ${sampleIndex + 1}: ${videoCase.prompt}`);
+                    video.src = encodeURI(`assets/qualitatives/video/${videoCase.id}/${method}/videos/${file}`);
+                    frame.appendChild(video);
+                });
+                videoRow.appendChild(methodCard);
+            });
+            videoGallery.appendChild(card);
+        });
+    </script>
 </body>
 
 </html>
