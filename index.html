@@ -24,7 +24,7 @@
             <div class="authors">
                 <p>
                     <a href="https://uygnim99.github.io/" target="_blank">Mingue Park</a>*,
-                    Prin Phunyaphibarn*,
+                    <a href="https://prinphunya.github.io/" target="_blank">Prin Phunyaphibarn</a>*,
                     <a href="https://phillipinseoul.github.io/" target="_blank">Phillip Y. Lee</a>,
                     <a href="https://mhsung.github.io/" target="_blank">Minhyuk Sung</a>
                 </p>
@@ -236,7 +236,11 @@
                 </figure>
 
                 <h3>Quantitative comparisons</h3>
-                <div class="table-wrap" role="region" aria-label="Quantitative results table" tabindex="0">
+                <p class="table-label">
+                    Text-to-image on MJHQ-30K and MS-COCO. FID and ImageReward (IR) measure quality, MPD<sub>L</sub>
+                    and Vendi measure per-prompt diversity.
+                </p>
+                <div class="table-wrap" role="region" aria-label="Text-to-image quantitative results" tabindex="0">
                     <table>
                         <thead>
                             <tr>
@@ -321,6 +325,41 @@
                                 <td>1.05</td>
                                 <td>0.57</td>
                                 <td>7.22</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="table-label">
+                    Text-to-video on InfinityStar-8B, generated from VBench-2.0 prompts and scored with VBench.
+                    Condition annealing gains more diversity (+132.2%) but loses quality. Scale-travel raises
+                    diversity from 0.270 to 0.487 (+80.4%) and gives up 0.002 points of quality.
+                </p>
+                <div class="table-wrap table-wrap--narrow" role="region"
+                    aria-label="Text-to-video quantitative results" tabindex="0">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Diversity ↑</th>
+                                <th>Quality Score ↑</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>InfinityStar</td>
+                                <td>0.270</td>
+                                <td>0.806</td>
+                            </tr>
+                            <tr>
+                                <td>+ Cond. Anneal.</td>
+                                <td>0.627</td>
+                                <td>0.794</td>
+                            </tr>
+                            <tr class="ours">
+                                <td>+ Scale-Travel (Ours)</td>
+                                <td>0.487</td>
+                                <td>0.804</td>
                             </tr>
                         </tbody>
                     </table>
